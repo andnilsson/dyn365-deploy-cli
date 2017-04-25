@@ -1,0 +1,26 @@
+{
+  "name": "dyn365-deploy-cli",
+  "version": "1.0.55",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "crm-deploy": "bin/deploy.js"
+  },
+  "dependencies": {
+    "clui": "^0.3.1",
+    "commander": "^2.9.0",
+    "dyn365-access-token": "^1.0.0",
+    "dyn365-file-uploader": "^1.0.8",
+    "figlet": "^1.2.0",
+    "fs": "0.0.1-security",
+    "linq": "^3.0.7",
+    "node-watch": "^0.5.2",
+    "prompt": "^1.0.0",
+    "shelljs": "^0.7.7"
+  }
+}
