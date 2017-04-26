@@ -16,11 +16,11 @@ import fs = require('fs');
 import readConfig from "./readconfig";
 var unirest = require("unirest");
 
-let config = {} as variables;
-let spinner: any = null;
-let accesstoken: string = "";
-let webresources: Webresource[] = [];
-let timestamp: number = 0;
+var config = {} as variables;
+var spinner: any = null;
+var accesstoken: string = "";
+var webresources: Webresource[] = [];
+var timestamp: number = 0;
 
 async function watch() {
     spinner = new CLI.Spinner('Starting');
@@ -45,9 +45,11 @@ async function watch() {
 }
 
 async function addWrToQueue(wr: Webresource) {
+    spinner.message("queueing file(s)");
     webresources.push(wr);
-    timestamp = (new Date()).getTime();
-    setTimeout(() => uploadWebresources(timestamp), 10000);
+    var time = (new Date()).getTime();
+    timestamp = time;
+    setTimeout(() => uploadWebresources(time), 10000);
 }
 
 async function getAccessToken() {
@@ -76,12 +78,13 @@ async function uploadWebresources(time: number) {
         return uploadFileAsync(wr, config.resource, config.apiversion, accesstoken);
     });
 
-    spinner.message("staring uploading web resources");
+    spinner.message("uploading web resources");
     await Promise.all(reqs);
     console.log(`done. executed ${reqs.length} requests`);
     webresources = [];
-    spinner.message("publishing...");
+    spinner.message("publishing");
     await publishcrm(accesstoken, config.resource, config.apiversion);
+    spinner.message("watching");
 }
 
 async function publishcrm(token: string, resource: string, apiversion: string): Promise<void> {
