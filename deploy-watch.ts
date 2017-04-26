@@ -47,7 +47,7 @@ async function watch() {
 async function addWrToQueue(wr: Webresource) {
     webresources.push(wr);
     timestamp = (new Date()).getTime();
-    setTimeout(() => uploadWebresources(timestamp), 1000);
+    setTimeout(() => uploadWebresources(timestamp), 10000);
 }
 
 async function getAccessToken() {
