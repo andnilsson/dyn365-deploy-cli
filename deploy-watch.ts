@@ -1,9 +1,11 @@
+import { setTimeout } from 'timers';
 import getTokenAsync from 'dyn365-access-token';
 import {
     createWebResourcesAsync,
     getExistingFileIdsAsync,
     uploadFileAsync,
-    createSingleWebResource
+    createSingleWebResource,
+    Webresource
 } from 'dyn365-file-uploader'
 import * as CLI from 'clui';
 var path = require('path');
@@ -14,14 +16,41 @@ import fs = require('fs');
 import readConfig from "./readconfig";
 var unirest = require("unirest");
 
+let config = {} as variables;
+let spinner: any = null;
+let accesstoken: string = "";
+let webresources: Webresource[] = [];
+let timestamp: number = 0;
+
 async function watch() {
-
-    console.log("Starting...");
-
-    var config = await readConfig();
+    spinner = new CLI.Spinner('Starting');
+    config = await readConfig();
     if (!config) throw "no config found";
+    
+    await getAccessToken();
 
-    var baseurl = config.baseurl;
+    webresources = await createWebResourcesAsync(config.baseurl, config.publisher);
+    await uploadWebresources(0);
+
+    spinner.message("Watching....");
+
+    watcher(config.baseurl, { recursive: true }, (e, filename) => {
+        console.log(`tracked change on ${filename}`);
+
+        var wr = createSingleWebResource(filename, config.baseurl, config.publisher);
+        if (!wr) return;
+
+        addWrToQueue(wr);
+    });
+}
+
+async function addWrToQueue(wr: Webresource) {
+    webresources.push(wr);
+    timestamp = (new Date()).getTime();
+    setTimeout(() => uploadWebresources(timestamp), 1000);
+}
+
+async function getAccessToken() {
     var req = {
         username: config.username,
         password: config.password,
@@ -31,51 +60,28 @@ async function watch() {
         commonAuthority: config.commonAuthority,
     }
 
-    var publisher = config.publisher;
-    var apiversion = config.apiversion;
-    var sourcepath = config.baseurl;
-
-
-    var spinner = new CLI.Spinner('Authenticating you, please wait...');
+    spinner = new CLI.Spinner('Authenticating you, please wait...');
     spinner.start();
-    var accesstoken = await getTokenAsync(req);
+    accesstoken = await getTokenAsync(req);
+}
 
-    var webresources = await createWebResourcesAsync(sourcepath, publisher);
+async function uploadWebresources(time: number) {
+    if(webresources.length < 1) return;
+    if(time != timestamp) return;
 
     spinner.message("getting existing webresources from dyn365");
-    await getExistingFileIdsAsync(webresources, config.resource, apiversion, accesstoken);
+    await getExistingFileIdsAsync(webresources, config.resource, config.apiversion, accesstoken);
 
     var reqs = webresources.map((wr, i) => {
-        return uploadFileAsync(wr, config.resource, apiversion, accesstoken);
+        return uploadFileAsync(wr, config.resource, config.apiversion, accesstoken);
     });
 
     spinner.message("staring uploading web resources");
     await Promise.all(reqs);
     console.log(`done. executed ${reqs.length} requests`);
-
+    webresources = [];
     spinner.message("publishing...");
     await publishcrm(accesstoken, config.resource, config.apiversion);
-    console.log("done...");
-
-    spinner.message("Watching....");
-
-    watcher(sourcepath, { recursive: true }, async (e, filename) => {
-        console.log(`tracked change on ${filename}`);
-
-        var wr = [createSingleWebResource(filename, sourcepath, publisher)];
-        if (!wr) return;
-
-        await getExistingFileIdsAsync(wr, config.resource, apiversion, accesstoken);
-
-        spinner.message("staring uploading web resources");
-        await uploadFileAsync(wr[0], config.resource, apiversion, accesstoken);
-
-        spinner.message("publishing...");
-        await publishcrm(accesstoken, config.resource, config.apiversion);
-        console.log("done...");
-
-        spinner.message("Watching....");
-    });
 }
 
 async function publishcrm(token: string, resource: string, apiversion: string): Promise<void> {
