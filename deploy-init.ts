@@ -4,11 +4,12 @@ var fs = require('fs');
 var path = require('path');
 
 async function init() {
+    var configfilename = '.crmdeployconfig';
     var config = await getvariablesAsync();
     var dir = path.dirname(process.cwd()) + '\\' + path.basename(process.cwd());
     config.baseurl = dir + '\\' + config.baseurl;
 
-    fs.writeFile(dir + '\\.crmdeployconfig', JSON.stringify(config), (err) => {
+    fs.writeFile(dir + '\\' + configfilename, JSON.stringify(config), (err) => {
         if (err) {
             return console.log(err);
         }
