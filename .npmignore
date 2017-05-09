@@ -57,5 +57,4 @@ typings/
 .crmdeployconfig
 .vscode/
 .taskkey
-cli/
-bin/
+.npmrc
