@@ -29,22 +29,25 @@ var filenames: en.IEnumerable<string> = en.from([]);
 
 async function watch(filenameparams: string[] = null) {
     await writeFiglet("file watcher");
-    
+
     if (filenameparams && filenameparams.length > 0) {
         filenames = en.from(filenameparams)
         console.log("watch started for files:");
         filenames.forEach(f => console.log(f));
     };
-    
+
     spinner = new CLI.Spinner('Starting');
     config = await readConfig();
     if (!config) throw "no config found";
 
     await getAccessToken();
 
-    webresources = en.from(await createWebResourcesAsync(config.baseurl, config.publisher)).where(x => filenames.any(filename => x.name.indexOf(filename) > 0)).toArray();
-    
-    if(webresources.length > 0)
+    if (filenameparams && filenameparams.length > 0)
+        webresources = en.from(await createWebResourcesAsync(config.baseurl, config.publisher)).where(x => filenames.any(filename => x.name.indexOf(filename) > 0)).toArray();
+    else
+        webresources = await createWebResourcesAsync(config.baseurl, config.publisher);
+        
+    if (webresources.length > 0)
         await uploadWebresources(0);
 
     spinner.message("Watching....");
@@ -122,7 +125,7 @@ async function uploadWebresources(time: number) {
 
     await findIdOnWebresorces();
 
-    if(filenames.count() > 0){
+    if (filenames.count() > 0) {
         webresources = en.from(webresources).where(x => filenames.any(filename => x.name.indexOf(filename) > 0)).toArray();
     }
 
