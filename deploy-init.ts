@@ -1,9 +1,13 @@
+import { writeFiglet } from './figlet';
 import { variables } from './ivariables';
 var p = require('prompt');
 var fs = require('fs');
 var path = require('path');
 
+
 async function init() {
+    await writeFiglet("init");    
+    
     var configfilename = '.crmdeployconfig';
     var config = await getvariablesAsync();
     var dir = path.dirname(process.cwd()) + '\\' + path.basename(process.cwd());

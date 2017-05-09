@@ -1,6 +1,6 @@
 {
   "name": "dyn365-deploy-cli",
-  "version": "1.0.72",
+  "version": "1.0.73",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "crm-deploy": "bin/deploy.js"
   },
   "dependencies": {
+    "chalk": "^1.1.3",
     "clui": "^0.3.1",
     "commander": "^2.9.0",
     "dyn365-access-token": "^1.0.0",

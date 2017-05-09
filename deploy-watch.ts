@@ -1,3 +1,4 @@
+import { writeFiglet } from './figlet';
 import { setTimeout } from 'timers';
 import getTokenAsync from 'dyn365-access-token';
 import {
@@ -27,6 +28,8 @@ var existingResources: en.IEnumerable<Webresource> = en.from([]);
 var filenames: en.IEnumerable<string> = en.from([]);
 
 async function watch(filenameparams: string[] = null) {
+    await writeFiglet("file watcher");
+    
     if (filenameparams && filenameparams.length > 0) {
         filenames = en.from(filenameparams)
         console.log("watch started for files:");
