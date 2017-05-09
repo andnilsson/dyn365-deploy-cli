@@ -45,11 +45,11 @@ async function getvariablesAsync(): Promise<variables> {
                     required: true
                 },
                 resource: {
-                    message: 'usually the dyn 365 instance',
+                    message: 'Resource (usually the dyn 365 instance)',
                     required: true
                 },
                 commonAuthority: {
-                    message: "usually something like this: 'https://login.windows.net/<<tenant>>.onmicrosoft.com/oauth2/token'",
+                    message: "Common Authority (usually something like : 'https://login.windows.net/<<tenant>>.onmicrosoft.com/oauth2/token')",
                     required: true
                 },
                 apiversion: {
