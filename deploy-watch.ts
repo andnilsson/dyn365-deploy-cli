@@ -1,3 +1,4 @@
+import { getAccessToken, publishcrm } from './functions';
 import { writeFiglet } from './figlet';
 import { setTimeout } from 'timers';
 import getTokenAsync from 'dyn365-access-token';
@@ -15,8 +16,6 @@ import * as en from 'linq';
 import { variables } from './ivariables';
 import readConfig from "./readconfig";
 var program = require('commander');
-
-var unirest = require("unirest");
 
 var isPublishing: boolean = false;
 var config = {} as variables;
@@ -37,16 +36,18 @@ async function watch(filenameparams: string[] = null) {
     };
 
     spinner = new CLI.Spinner('Starting');
+    spinner.start();
     config = await readConfig();
     if (!config) throw "no config found";
 
-    await getAccessToken();
+    spinner = new CLI.Spinner('Authenticating you, please wait...');
+    await getAccessToken(config);
 
     if (filenameparams && filenameparams.length > 0)
         webresources = en.from(await createWebResourcesAsync(config.baseurl, config.publisher)).where(x => filenames.any(filename => x.name.indexOf(filename) > 0)).toArray();
     else
         webresources = await createWebResourcesAsync(config.baseurl, config.publisher);
-        
+
     if (webresources.length > 0)
         await uploadWebresources(0);
 
@@ -78,20 +79,7 @@ function addWrToQueue(wr: Webresource) {
     setTimeout(() => uploadWebresources(time), 1000);
 }
 
-async function getAccessToken() {
-    var req = {
-        username: config.username,
-        password: config.password,
-        client_id: config.clientid,
-        client_secret: config.clientsecret,
-        resource: config.resource,
-        commonAuthority: config.commonAuthority,
-    }
 
-    spinner = new CLI.Spinner('Authenticating you, please wait...');
-    spinner.start();
-    accesstoken = await getTokenAsync(req);
-}
 
 async function findIdOnWebresorces() {
     webresources.forEach((r) => {
@@ -145,21 +133,7 @@ async function uploadWebresources(time: number) {
     spinner.message("watching");
 }
 
-async function publishcrm(token: string, resource: string, apiversion: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        var req = unirest("POST", `${resource}/api/data/v${apiversion}/PublishAllXml`);
-        req.headers({
-            "content-type": "application/json",
-            "authorization": `Bearer ${token}`
-        });
-        req.end((res) => {
-            if (res.error) throw new Error(res.error);
 
-            resolve();
-        });
-    });
-
-}
 
 
 program.parse(process.argv);
