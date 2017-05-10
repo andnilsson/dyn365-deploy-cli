@@ -33,15 +33,16 @@ async function watch(filenameparams: string[] = null) {
         filenames = en.from(filenameparams)
         console.log("watch started for files:");
         filenames.forEach(f => console.log(f));
-    };
-
+    };    
+    
     spinner = new CLI.Spinner('Starting');
     spinner.start();
+    
     config = await readConfig();
     if (!config) throw "no config found";
 
-    spinner = new CLI.Spinner('Authenticating you, please wait...');
-    await getAccessToken(config);
+    spinner.message('Authenticating you, please wait...');
+    accesstoken = await getAccessToken(config);
 
     if (filenameparams && filenameparams.length > 0)
         webresources = en.from(await createWebResourcesAsync(config.baseurl, config.publisher)).where(x => filenames.any(filename => x.name.indexOf(filename) > 0)).toArray();
