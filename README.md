@@ -2,6 +2,8 @@
 A small cli to upload files to a dynamics 365 instance.
 Could be used as a developer tool or as a CI/CD tool in an automated build or delivery
 
+# By [Stratiteq Sweden AB](http://www.stratiteq.com/)
+
 __This CLI is a work in progress__
 Currently its not stable enough to be used in a production environment, but it works fine as a developer tool
 
