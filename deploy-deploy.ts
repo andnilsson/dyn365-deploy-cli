@@ -71,7 +71,7 @@ async function uploadWebresources() {
 
     spinner.message("uploading web resources");
     await Promise.all(reqs);
-    console.log(`done. executed ${reqs.length} requests`);
+    console.log(`Done. executed ${reqs.length} requests`);
     webresources = [];
     spinner.message("publishing");
     await publishcrm(accesstoken, config.resource, config.apiversion);
