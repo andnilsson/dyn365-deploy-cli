@@ -9,7 +9,7 @@ Currently its not stable enough to be used in a production environment, but it w
 
 ### prerequisites of use
 - dynamics 365
-- Oauth2 access to dynamics 365 web api (azure ad web app with access to dynamics 365)
+- Oauth2 access to dynamics 365 web api [azure ad web app with access to dynamics 365](http://scaleablesolutions.com/how-to-register-dynamics-crm-app-with-azure-active-directory/)
 
 ### install
 ```
@@ -21,6 +21,18 @@ The credentials will be stored on disk at the project root in a file called .crm
 
 __note:__ the init function does not add this file to .gitignore even if it says it will. You´ll have to add it manually.
 
+### generate
+```
+$ crm-deploy generate contacts
+```
+
+will generate a file /src/domain/contacts.ts
+
+This function will do a metadata query matching the name parameter agains the entity set name, and map the response to a typescript class and generate a file with the name of the entity. This file will contain alla properties of the entity. It will map all picklists to enumerations.
+
+Two classes will be generated. Using contacts as an exemple, it will generate one class to be used when using the crm web api. 
+
+The other class can be used on form scripts. All properties are wrapped in a 'crm base class' containing getters and setters to the form. This can be achieved with [crm-common-js](https://www.npmjs.com/package/crm-common-js), so that must be accessible for this to work.
 
 
 ### deploy

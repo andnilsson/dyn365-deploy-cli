@@ -24,7 +24,7 @@ var filenames: en.IEnumerable<string> = en.from([]);
 
 async function upload(filenameparams: string[] = null): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
-        await writeFiglet("upload files");
+        await writeFiglet("upload files");        
 
         if (filenameparams && filenameparams.length > 0) {
             filenames = en.from(filenameparams);

@@ -1,4 +1,5 @@
 export interface variables {
+    root: string;
     baseurl: string;
     username: string;
     password: string;
