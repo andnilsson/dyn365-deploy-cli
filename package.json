@@ -1,6 +1,6 @@
 {
   "name": "dyn365-deploy-cli",
-  "version": "1.0.89",
+  "version": "1.0.90v B",
   "description": "",
   "main": "index.js",
   "scripts": {
