@@ -35,6 +35,9 @@ async function generate(filenameparams: string[] = null): Promise<void> {
             domainroot = srcroot + "\\domain\\";
             if (!fs.existsSync(domainroot))
                 fs.mkdirSync(domainroot);
+            domainroot = domainroot + "model\\";
+            if (!fs.existsSync(domainroot))
+                fs.mkdirSync(domainroot);
 
             await writeBaseFile();
             var modelrequests = filenameparams.map((name) => composeModel(name));
@@ -113,7 +116,7 @@ const attributeTypeWhitelist = en.from([
     { attributeType: "Integer", typeRepresentation: "number" },
     { attributeType: "Memo", typeRepresentation: "string" },
     { attributeType: "Picklist", typeRepresentation: "number" },
-    { attributeType: "Uniqueidentifier", typeRepresentation: "EntityReference" },
+    { attributeType: "Uniqueidentifier", typeRepresentation: "string" },
     { attributeType: "Boolean", typeRepresentation: "boolean" },
     { attributeType: "Double", typeRepresentation: "number" },
 ] as AttributeMapp[])
@@ -156,9 +159,11 @@ function clean(string: string) {
 function getFormModel(metadata: EntityMetadata, entityname: string, optionsets: OptionsetMetadata): string {
     var arr = [];
     arr.push(`export class ${entityname}Form {`);
-    en.from(metadata.Attributes).where(a => a.DisplayName.LocalizedLabels.length > 0 && attributeTypeWhitelist.any(m => m.attributeType === a.AttributeType)).forEach((attr) => {
+    en.from(metadata.Attributes).where(a => a.DisplayName.LocalizedLabels.length > 0 && a.Targets != null || attributeTypeWhitelist.any(m => m.attributeType === a.AttributeType)).forEach((attr) => {
         if (attr.AttributeType == "Picklist") {
             arr.push(`  ${attr.LogicalName}: CrmProp<${attr.LogicalName}> = new CrmProp<${attr.LogicalName}>("${attr.LogicalName}")`);
+        } else if (attr.Targets != null) {
+            arr.push(`  ${attr.LogicalName}: CrmProp<${attr.LogicalName}> = new CrmProp<EntityReference>("${attr.LogicalName}")`);
         } else {
             var type = attributeTypeWhitelist.where(x => x.attributeType === attr.AttributeType).firstOrDefault();
             if (type) {
@@ -178,9 +183,11 @@ function getObjectModel(metadata: EntityMetadata, entityname: string, optionsets
     arr.push('');
     arr.push(GenerateOptionsets(optionsets));
     arr.push(`export class ${entityname} {`);
-    en.from(metadata.Attributes).where(a => a.DisplayName.LocalizedLabels.length > 0 && attributeTypeWhitelist.any(m => m.attributeType === a.AttributeType)).forEach((attr) => {
+    en.from(metadata.Attributes).where(a => a.DisplayName.LocalizedLabels.length > 0 && a.Targets != null || attributeTypeWhitelist.any(m => m.attributeType === a.AttributeType)).forEach((attr) => {
         if (attr.AttributeType == "Picklist") {
             arr.push(`  ${attr.LogicalName}: ${attr.LogicalName};`);
+        } else if (attr.Targets != null) {
+            arr.push(`  ${attr.LogicalName}: EntityReference`);
         } else {
             var type = attributeTypeWhitelist.where(x => x.attributeType === attr.AttributeType).firstOrDefault();
             if (type) {
