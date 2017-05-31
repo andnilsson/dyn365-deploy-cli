@@ -38,7 +38,6 @@ export interface EntityReference {
     name?: string;
     logicalName?: string;
 }
-
 export interface IQueryable {
     getSchemaName: () => string
 }

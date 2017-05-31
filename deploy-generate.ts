@@ -119,6 +119,8 @@ const attributeTypeWhitelist = en.from([
     { attributeType: "Uniqueidentifier", typeRepresentation: "string" },
     { attributeType: "Boolean", typeRepresentation: "boolean" },
     { attributeType: "Double", typeRepresentation: "number" },
+    { attributeType: "Money", typeRepresentation: "number" },
+    { attributeType: "DateTime", typeRepresentation: "Date" }
 ] as AttributeMapp[])
 
 function GenerateOptionsets(optionsets: OptionsetMetadata): string {
@@ -177,7 +179,7 @@ function getFormModel(metadata: EntityMetadata, entityname: string, optionsets: 
     return arr.join("\n");
 }
 
-function getObjectModel(metadata: EntityMetadata, entityname: string, schemaname: string,  optionsets: OptionsetMetadata): Model {
+function getObjectModel(metadata: EntityMetadata, entityname: string, schemaname: string, optionsets: OptionsetMetadata): Model {
     var arr = [];
     arr.push("import { CrmProp, EntityReference, Money, IQueryable } from './Base'")
     arr.push('');
