@@ -55,7 +55,6 @@ typings/
 .env
 
 .crmdeployconfig
-.vscode/
 .taskkey
 cli/
 bin/
