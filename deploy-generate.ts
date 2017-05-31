@@ -165,7 +165,7 @@ function getFormModel(metadata: EntityMetadata, entityname: string, optionsets: 
         if (attr.AttributeType == "Picklist") {
             arr.push(`  ${attr.LogicalName}: CrmProp<${attr.LogicalName}> = new CrmProp<${attr.LogicalName}>("${attr.LogicalName}")`);
         } else if (attr.Targets != null) {
-            arr.push(`  ${attr.LogicalName}: CrmProp<EntityReference> = new CrmProp<EntityReference>("${attr.LogicalName}")`);
+            arr.push(`  ${attr.LogicalName}: CrmProp<EntityReference[]> = new CrmProp<EntityReference[]>("${attr.LogicalName}")`);
         } else {
             var type = attributeTypeWhitelist.where(x => x.attributeType === attr.AttributeType).firstOrDefault();
             if (type) {
