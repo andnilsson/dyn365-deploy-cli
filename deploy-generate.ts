@@ -181,7 +181,7 @@ function getFormModel(metadata: EntityMetadata, entityname: string, optionsets: 
 
 function getObjectModel(metadata: EntityMetadata, entityname: string, schemaname: string, optionsets: OptionsetMetadata): Model {
     var arr = [];
-    arr.push("import { CrmProp, EntityReference, Money, IQueryable } from './Base'")
+    arr.push("import { CrmProp, EntityReference, IQueryable } from './Base'")
     arr.push('');
     arr.push(GenerateOptionsets(optionsets));
     arr.push(`export class ${entityname} implements IQueryable {`);
