@@ -36,7 +36,7 @@ export class CrmProp<T> {
 export interface EntityReference {
     id?: string;
     name?: string;
-    logicalName?: string;
+    entityType?: string;
 }
 
 export interface IQueryable {
