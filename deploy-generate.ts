@@ -79,7 +79,7 @@ async function composeModel(entityname: string): Promise<Model> {
         var label = en.from(metadatacontent.DisplayName.LocalizedLabels).where(x => x.LanguageCode == 1033).firstOrDefault();
         if (label != null)
             entityname = clean(label.Label);
-        var model = getObjectModel(metadata, entityname, optionsets)
+        var model = getObjectModel(metadata, entityname, metadatacontent.EntitySetName, optionsets)
 
         resolve(model);
     });
@@ -177,12 +177,13 @@ function getFormModel(metadata: EntityMetadata, entityname: string, optionsets: 
     return arr.join("\n");
 }
 
-function getObjectModel(metadata: EntityMetadata, entityname: string, optionsets: OptionsetMetadata): Model {
+function getObjectModel(metadata: EntityMetadata, entityname: string, schemaname: string,  optionsets: OptionsetMetadata): Model {
     var arr = [];
-    arr.push("import { CrmProp, EntityReference, Money } from './Base'")
+    arr.push("import { CrmProp, EntityReference, Money, IQueryable } from './Base'")
     arr.push('');
     arr.push(GenerateOptionsets(optionsets));
     arr.push(`export class ${entityname} {`);
+    arr.push(`  getSchemaName() { return "${schemaname}" };`)
     en.from(metadata.Attributes).where(a => a.DisplayName.LocalizedLabels.length > 0 && a.Targets != null || attributeTypeWhitelist.any(m => m.attributeType === a.AttributeType)).forEach((attr) => {
         if (attr.AttributeType == "Picklist") {
             arr.push(`  ${attr.LogicalName}: ${attr.LogicalName};`);

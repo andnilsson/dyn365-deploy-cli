@@ -38,6 +38,11 @@ export interface EntityReference {
     name?: string;
     logicalName?: string;
 }
-export interface Money{
+
+export interface Money {
     
+}
+
+export interface IQueryable {
+    getSchemaName: () => string
 }
