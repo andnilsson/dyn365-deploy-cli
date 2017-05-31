@@ -182,7 +182,7 @@ function getObjectModel(metadata: EntityMetadata, entityname: string, schemaname
     arr.push("import { CrmProp, EntityReference, Money, IQueryable } from './Base'")
     arr.push('');
     arr.push(GenerateOptionsets(optionsets));
-    arr.push(`export class ${entityname} {`);
+    arr.push(`export class ${entityname} implements IQueryable {`);
     arr.push(`  getSchemaName() { return "${schemaname}" };`)
     en.from(metadata.Attributes).where(a => a.DisplayName.LocalizedLabels.length > 0 && a.Targets != null || attributeTypeWhitelist.any(m => m.attributeType === a.AttributeType)).forEach((attr) => {
         if (attr.AttributeType == "Picklist") {
