@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}\\bin\\deploy-generate.js",
-            "args": ["stq_quotationpriceitems"],
+            "args": ["accounts"],
             "outFiles": []
         },
         {

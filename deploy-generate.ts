@@ -190,7 +190,7 @@ function getObjectModel(metadata: EntityMetadata, entityname: string, schemaname
         if (attr.AttributeType == "Picklist") {
             arr.push(`  ${attr.LogicalName}: ${attr.LogicalName};`);
         } else if (attr.Targets != null) {
-            arr.push(`  ${attr.LogicalName}: EntityReference`);
+            arr.push(`  _${attr.LogicalName}_value: string`);
         } else {
             var type = attributeTypeWhitelist.where(x => x.attributeType === attr.AttributeType).firstOrDefault();
             if (type) {
