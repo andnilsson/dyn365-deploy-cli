@@ -77,8 +77,11 @@ async function composeModel(entityname: string): Promise<Model> {
         var optionsets = await getOptioinSets(metadatacontent.MetadataId);
         var metadata = await getEntityMetadata(metadatacontent.MetadataId);
         var label = en.from(metadatacontent.DisplayName.LocalizedLabels).where(x => x.LanguageCode == 1033).firstOrDefault();
-        if (label != null)
-            entityname = clean(label.Label);
+        if (!label) {
+            label = en.from(metadatacontent.DisplayName.LocalizedLabels).firstOrDefault();
+        }
+
+        entityname = clean(label.Label);
         var model = getObjectModel(metadata, entityname, metadatacontent.EntitySetName, optionsets)
 
         resolve(model);
@@ -130,12 +133,18 @@ function GenerateOptionsets(optionsets: OptionsetMetadata): string {
         if (optionset.GlobalOptionSet) {
             optionset.GlobalOptionSet.Options.forEach(option => {
                 var label = en.from(option.Label.LocalizedLabels).where(x => (x as any).LanguageCode == 1033).firstOrDefault();
+                if(!label){
+                    label = option.Label.LocalizedLabels[0];
+                }
                 var cleanlabel = clean((label as any).Label);
                 rows.push(` ${cleanlabel} = ${option.Value},`);
             });
         } else if (optionset.OptionSet) {
             optionset.OptionSet.Options.forEach(option => {
                 var label = en.from(option.Label.LocalizedLabels).where(x => x.LanguageCode == 1033).firstOrDefault();
+                if(!label){
+                    label = option.Label.LocalizedLabels[0];
+                }
                 var cleanlabel = clean(label.Label);
                 rows.push(` ${cleanlabel} = ${option.Value},`);
             });
